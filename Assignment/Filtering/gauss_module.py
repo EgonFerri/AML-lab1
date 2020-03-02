@@ -32,10 +32,10 @@ Output: smoothed image
 """
 def gaussianfilter(img, sigma): 
     
-    [Gx, pos] = gauss_module.gauss(sigma) #get gaussian kernel
+    [Gx, pos] = gauss(sigma) #get gaussian kernel
     
-    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx),axis=0, arr=img) #apply to all rows
-    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx),axis=1, arr=smooth_img) #apply to all columns
+    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx, "same"),axis=0, arr=img) #apply to all rows
+    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx, "same"),axis=1, arr=smooth_img) #apply to all columns
 
     return smooth_img
 
@@ -48,7 +48,12 @@ The function should return the Gaussian derivative values Dx computed at the ind
 """
 def gaussdx(sigma):
 
-    #...
+    sig2=sigma**2
+    
+    x=list(map(round,np.arange(-3*(sig2), 3*(sig2)+1))) #define the range
+    
+    Dx= [-(el/sig2) * (np.exp(-0.5*((el*el)/sig2))) for el in x] #find derivative gaussian values
+    Dx= Dx/sum(Dx) #normalize
     
     return Dx, x
 
@@ -56,7 +61,12 @@ def gaussdx(sigma):
 
 def gaussderiv(img, sigma):
 
-    #...
+    [Dx, pos] = gaussdx(sigma) #get gaussian kernel
+    
+    imgDx=np.apply_along_axis(func1d=lambda x: np.convolve(x, Dx, "same"),axis=0, arr=img) #apply to all rows
+    imgDy=np.apply_along_axis(func1d=lambda x: np.convolve(x, Dx, "same"),axis=1, arr=img) #apply to all columns
+
+
     
     return imgDx, imgDy
 
