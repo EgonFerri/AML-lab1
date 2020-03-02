@@ -14,11 +14,10 @@ The function should return the Gaussian values Gx computed at the indexes x
 def gauss(sigma):   
     sig2=sigma**2
     
-    x=list(map(round,np.arange(-3*(sig2), 3*(sig2)+1)))
+    x=list(map(round,np.arange(-3*(sig2), 3*(sig2)+1))) #define the range
     
-    Gx= [np.exp(-0.5*((el*el)/sig2)) for el in x]
-    Gx= Gx/sum(Gx)
-    return (Gx, x)
+    Gx= [np.exp(-0.5*((el*el)/sig2)) for el in x] #find gaussian values
+    Gx= Gx/sum(Gx) #normalize
     
     return Gx, x
 
@@ -31,9 +30,12 @@ Leverage the separability of Gaussian filtering
 Input: image, sigma (standard deviation)
 Output: smoothed image
 """
-def gaussianfilter(img, sigma):
+def gaussianfilter(img, sigma): 
     
-    #...
+    [Gx, pos] = gauss_module.gauss(sigma) #get gaussian kernel
+    
+    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx),axis=0, arr=img) #apply to all rows
+    smooth_img=np.apply_along_axis(func1d=lambda x: np.convolve(x, Gx),axis=1, arr=smooth_img) #apply to all columns
 
     return smooth_img
 
