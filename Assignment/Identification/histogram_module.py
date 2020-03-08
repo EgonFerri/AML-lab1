@@ -23,10 +23,30 @@ def normalized_hist(img_gray, num_bins):
     assert img_gray.dtype == 'float', 'incorrect image type'
 
 
-    #... (your code here)
+    flattened = [pix for dim in img_gray for pix in dim]
+    min_interval = 0
+    max_interval = 255
+    
+    bin_size = max_interval/num_bins
+    bin_hist = {0:0}
+    
+    previous = 0
+    for i in range(num_bins):
+        bin_ = previous + bin_size
+        bin_hist[bin_] = 0
+        previous = bin_
 
+    
+    for pix in flattened:
+        for bin_ in bin_hist:
+            if bin_ - bin_size <= pix < bin_:
+                bin_hist[bin_-bin_size] += 1
 
-    return hists, bins
+    hists = list(bin_hist.values())
+    hists.pop()
+    bins = list(bin_hist.keys())
+
+    return [hists/np.sum(hists)], bins
 
 
 
@@ -46,23 +66,38 @@ def rgb_hist(img_color_double, num_bins):
     assert img_color_double.dtype == 'float', 'incorrect image type'
 
 
-    #... (your code here)
-
+    import numpy as np
+    
+    min_interval = 0
+    max_interval = 255
+    flattened = [pix for dim in img_color_double for pix in dim]
+    bin_size = max_interval/num_bins
+    
+    bins = [0 for _ in range(num_bins+1)]
+    previous = 0
+    for i in range(num_bins):
+        bin_ = previous + bin_size
+        bins[i+1] = bin_
+        previous = bin_
 
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
-    
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        
-        #... (your code here)
-        pass
-
+            rgb = [0,0,0]
+            for k in range(len(bins)):
+                if bins[k-1] <= flattened[i][0] < bins[k]:
+                    rgb[0] = k-1
+                if bins[k-1] <= flattened[i][1] < bins[k]:
+                    rgb[1] = k-1
+                if bins[k-1] <= flattened[i][2] < bins[k]:
+                    rgb[2] = k-1
+                    
+            hists[rgb[0],rgb[1],rgb[2]] += 1
 
     #Normalize the histogram such that its integral (sum) is equal 1
-    #... (your code here)
-
+    hists = hists/np.sum(hists)
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     return hists
