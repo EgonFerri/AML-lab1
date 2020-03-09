@@ -65,8 +65,6 @@ def rgb_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
 
-
-    import numpy as np
     
     min_interval = 0
     max_interval = 255
@@ -118,17 +116,37 @@ def rg_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
 
-
-    #... (your code here)
+    import numpy as np
+    
+    min_interval = 0
+    max_interval = 255
+    flattened = [pix for dim in img_color_double for pix in dim]
+    bin_size = max_interval/num_bins
+    
+    bins = [0 for _ in range(num_bins+1)]
+    previous = 0
+    for i in range(num_bins):
+        bin_ = previous + bin_size
+        bins[i+1] = bin_
+        previous = bin_
 
 
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
     
-    #... (your code here)
-
-
+    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
+        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
+        rg = [0,0]
+        for k in range(len(bins)):
+            if bins[k-1] <= flattened[i][0] < bins[k]:
+                rg[0] = k-1
+            if bins[k-1] <= flattened[i][1] < bins[k]:
+                rg[1] = k-1
+                    
+        hists[rg[0],rg[1]] += 1
+    #Normalize the histogram such that its integral (sum) is equal 1
+    hists = hists/np.sum(hists)
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
 
@@ -150,16 +168,39 @@ def dxdy_hist(img_gray, num_bins):
     assert img_gray.dtype == 'float', 'incorrect image type'
 
 
-    #... (your code here)
-
-
+     
+    min_interval = -6
+    max_interval = 6
+    
+    derivx, derivy = gaussderiv(img, 3)
+    derivx = np.clip(derivx, min_interval, max_interval)
+    derivy = np.clip(derivy, min_interval, max_interval) 
+        
+    stacked = np.array(list(zip(derivx.reshape(-1), derivy.reshape(-1))))
+    bin_size = (max_interval - min_interval)/num_bins
+    
+    bins = [-6 for _ in range(num_bins+1)]
+    previous = -6
+    for i in range(num_bins):
+        bin_ = previous + bin_size
+        bins[i+1] = bin_
+        previous = bin_
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
+    
 
-
-    #... (your code here)
-
-
+    for i in range(derivx.shape[0]):
+        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i 
+        deriv_xy = [0,0]
+        for k in range(len(bins)):
+            if bins[k-1] <= stacked[i][0] < bins[k]:
+                deriv_xy[0] = k-1
+            if bins[k-1] <= stacked[i][1] < bins[k]:
+                deriv_xy[1] = k-1
+                    
+            hists[deriv_xy[0],deriv_xy[1]] += 1
+    
+    hists = hists/np.sum(hists)
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     return hists
