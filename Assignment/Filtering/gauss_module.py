@@ -16,9 +16,8 @@ def gauss(sigma):
     
     x=list(map(round,np.arange(-3*(sig2), 3*(sig2)+1))) #define the range
     
-    Gx= [np.exp(-0.5*((el*el)/sig2)) for el in x] #find gaussian values
-    Gx= Gx/sum(Gx) #normalize
-    
+    Gx= np.array([1/(sigma*np.sqrt(2*np.pi))*np.exp(-0.5*((el*el)/sig2)) for el in x]) #find gaussian values
+
     return Gx, x
 
 
@@ -49,11 +48,11 @@ The function should return the Gaussian derivative values Dx computed at the ind
 def gaussdx(sigma):
 
     sig2=sigma**2
+    sig3=sigma**3
     
     x=list(map(round,np.arange(-3*(sig2), 3*(sig2)+1))) #define the range
     
-    Dx= [-(el/sig2) * (np.exp(-0.5*((el*el)/sig2))) for el in x] #find derivative gaussian values
-    Dx= Dx/sum(Dx) #normalize
+    Dx= np.array([-el/(sig3*np.sqrt(2*np.pi))* (np.exp(-((el*el)/(2*sig2)))) for el in x]) #find derivative gaussian values
     
     return Dx, x
 
