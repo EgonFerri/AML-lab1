@@ -9,8 +9,8 @@ import math
 
 def dist_intersect(x,y):
     
-    #... (your code here)
-
+    zipped = list(map(min, list(zip(x,y))))
+    return 1 - (0.5*((np.sum(zipped)/np.sum(x)) + (np.sum(zipped)/np.sum(y))))
 
 
 # Compute the L2 distance between x and y histograms
@@ -18,8 +18,9 @@ def dist_intersect(x,y):
 
 def dist_l2(x,y):
     
-    #... (your code here)
-
+    dist = np.sum((x - y)**2)
+    assert 0 <= dist <= np.sqrt(2), "not in [0, sqrt(2)]"
+    return dist
 
 
 # Compute chi2 distance between x and y
@@ -28,7 +29,11 @@ def dist_l2(x,y):
 
 def dist_chi2(x,y):
     
-    #... (your code here)
+    x += 1
+    y += 1
+    dist = np.sum(((x - y)**2)/(x + y))
+    assert 0 <= dist <= np.inf, "not in [0, inf]"
+    return dist
 
 
 
