@@ -22,31 +22,30 @@ def normalized_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
-
     flattened = [pix for dim in img_gray for pix in dim]
-    min_interval = 0
-    max_interval = 255
+    min_interval = min(flattened) - 0.00000001
+    max_interval = max(flattened) + 0.00000001
     
-    bin_size = max_interval/num_bins
-    bin_hist = {0:0}
+    bin_size = (max_interval-min_interval)/num_bins
+    bin_hist = {min_interval:0}
     
-    previous = 0
+    previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
         bin_hist[bin_] = 0
         previous = bin_
-
+    print(bin_hist)
     
+    keys = list(bin_hist.keys())
     for pix in flattened:
-        for bin_ in bin_hist:
-            if bin_ - bin_size <= pix < bin_:
-                bin_hist[bin_-bin_size] += 1
+        for i in range(len(bin_hist)):
+            if keys[i-1]<= pix < keys[i]:
+                bin_hist[keys[i-1]] += 1
 
     hists = list(bin_hist.values())
     hists.pop()
     bins = list(bin_hist.keys())
-
-    return [hists/np.sum(hists)], bins
+    return  hists/np.sum(hists), [round(bin_,3) for bin_ in bins]
 
 
 
@@ -64,32 +63,34 @@ def normalized_hist(img_gray, num_bins):
 def rgb_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
-
     
-    min_interval = 0
-    max_interval = 255
     flattened = [pix for dim in img_color_double for pix in dim]
-    bin_size = max_interval/num_bins
+    pixels = [el for array in flattened for el in array]
+    min_interval = min(pixels) - 0.00000001
+    max_interval = max(pixels) + 0.00000001
     
-    bins = [0 for _ in range(num_bins+1)]
-    previous = 0
+    bin_size = (max_interval-min_interval)/num_bins
+    bin_hist = {min_interval:0}
+    
+    previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
-        bins[i+1] = bin_
+        bin_hist[bin_] = 0
         previous = bin_
 
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
     # Loop for each pixel i in the image 
+    keys = list(bin_hist.keys())
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
             rgb = [0,0,0]
-            for k in range(len(bins)):
-                if bins[k-1] <= flattened[i][0] < bins[k]:
+            for k in range(len(bin_hist)):
+                if keys[k-1] <= flattened[i][0] < keys[k]:
                     rgb[0] = k-1
-                if bins[k-1] <= flattened[i][1] < bins[k]:
+                if keys[k-1] <= flattened[i][1] < keys[k]:
                     rgb[1] = k-1
-                if bins[k-1] <= flattened[i][2] < bins[k]:
+                if keys[k-1] <= flattened[i][2] < keys[k]:
                     rgb[2] = k-1
                     
             hists[rgb[0],rgb[1],rgb[2]] += 1
@@ -115,33 +116,32 @@ def rgb_hist(img_color_double, num_bins):
 def rg_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
-
-    import numpy as np
     
-    min_interval = 0
-    max_interval = 255
     flattened = [pix for dim in img_color_double for pix in dim]
-    bin_size = max_interval/num_bins
+    pixels = [el for array in flattened for el in array]
+    min_interval = min(pixels) - 0.00000001
+    max_interval = max(pixels) + 0.00000001
     
-    bins = [0 for _ in range(num_bins+1)]
-    previous = 0
+    bin_size = (max_interval-min_interval)/num_bins
+    bin_hist = {min_interval:0}
+    
+    previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
-        bins[i+1] = bin_
+        bin_hist[bin_] = 0
         previous = bin_
-
 
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
-    
+    keys = list(bin_hist.keys())
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
         rg = [0,0]
-        for k in range(len(bins)):
-            if bins[k-1] <= flattened[i][0] < bins[k]:
+        for k in range(len(bin_hist)):
+            if keys[k-1] <= flattened[i][0] < keys[k]:
                 rg[0] = k-1
-            if bins[k-1] <= flattened[i][1] < bins[k]:
+            if keys[k-1] <= flattened[i][1] < keys[k]:
                 rg[1] = k-1
                     
         hists[rg[0],rg[1]] += 1
@@ -166,13 +166,12 @@ def rg_hist(img_color_double, num_bins):
 def dxdy_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
-
-
-     
+    
+    
     min_interval = -6
     max_interval = 6
     
-    derivx, derivy = gaussderiv(img, 3)
+    derivx, derivy = gauss_module.gaussderiv(img, 3)
     derivx = np.clip(derivx, min_interval, max_interval)
     derivy = np.clip(derivy, min_interval, max_interval) 
         
@@ -204,7 +203,6 @@ def dxdy_hist(img_gray, num_bins):
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     return hists
-
 
 
 def is_grayvalue_hist(hist_name):
