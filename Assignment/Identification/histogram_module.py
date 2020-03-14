@@ -23,8 +23,8 @@ def normalized_hist(img_gray, num_bins):
     assert img_gray.dtype == 'float', 'incorrect image type'
 
     flattened = [pix for dim in img_gray for pix in dim]
-    min_interval = min(flattened) - 0.00000001
-    max_interval = max(flattened) + 0.00000001
+    min_interval = 0 - 0.00000001
+    max_interval = 255 + 0.00000001
     
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
@@ -34,7 +34,6 @@ def normalized_hist(img_gray, num_bins):
         bin_ = previous + bin_size
         bin_hist[bin_] = 0
         previous = bin_
-    #print(bin_hist)
     
     keys = list(bin_hist.keys())
     for pix in flattened:
@@ -66,8 +65,8 @@ def rgb_hist(img_color_double, num_bins):
     
     flattened = [pix for dim in img_color_double for pix in dim]
     pixels = [el for array in flattened for el in array]
-    min_interval = min(pixels) - 0.00000001
-    max_interval = max(pixels) + 0.00000001
+    min_interval = 0 - 0.00000001
+    max_interval = 255 + 0.00000001
     
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
@@ -119,8 +118,8 @@ def rg_hist(img_color_double, num_bins):
     
     flattened = [pix for dim in img_color_double for pix in dim]
     pixels = [el for array in flattened for el in array]
-    min_interval = min(pixels) - 0.00000001
-    max_interval = max(pixels) + 0.00000001
+    min_interval = 0 - 0.00000001
+    max_interval = 255 + 0.00000001
     
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
@@ -171,7 +170,7 @@ def dxdy_hist(img_gray, num_bins):
     min_interval = -6
     max_interval = 6
     
-    derivx, derivy = gauss_module.gaussderiv(img, 3)
+    derivx, derivy = gauss_module.gaussderiv(img_gray, 3)
     derivx = np.clip(derivx, min_interval, max_interval)
     derivy = np.clip(derivy, min_interval, max_interval) 
         
