@@ -4,11 +4,11 @@ from numpy import histogram as hist
 
 
 #Add the Filtering folder, to import the gauss_module.py file, where gaussderiv is defined (needed for dxdy_hist)
-import sys, os, inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-filteringpath = os.path.join(parentdir, 'Filtering')
-sys.path.insert(0,filteringpath)
+#import sys, os, inspect
+#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+#parentdir = os.path.dirname(currentdir)
+#filteringpath = os.path.join(parentdir, 'Filtering')
+#sys.path.insert(0,filteringpath)
 import gauss_module
 
 
@@ -34,7 +34,7 @@ def normalized_hist(img_gray, num_bins):
         bin_ = previous + bin_size
         bin_hist[bin_] = 0
         previous = bin_
-    print(bin_hist)
+    #print(bin_hist)
     
     keys = list(bin_hist.keys())
     for pix in flattened:
@@ -45,7 +45,7 @@ def normalized_hist(img_gray, num_bins):
     hists = list(bin_hist.values())
     hists.pop()
     bins = list(bin_hist.keys())
-    return  hists/np.sum(hists), [round(bin_,3) for bin_ in bins]
+    return  hists/np.sum(hists), np.array([round(bin_,3) for bin_ in bins])
 
 
 
