@@ -194,7 +194,7 @@ def dxdy_hist(img_gray, num_bins):
     derivy = np.clip(derivy, min_interval, max_interval) 
     
     # stacking the derivatives to iterate over them
-    stacked = np.array(list(zip(derivx.reshape(-1), derivy.reshape(-1))))
+    stacked = list(zip(derivx.reshape(-1), derivy.reshape(-1)))
 
     # the bin size is equal to the difference of the extremes
     # divided by the input number of bins    
@@ -213,7 +213,7 @@ def dxdy_hist(img_gray, num_bins):
     
     # filling the array's values with the frequencies of the 
     # pixels in the bins intervals
-    for i in range(derivx.shape[0]):
+    for i in range(len(stacked)):
 
         deriv_xy = [0,0]
         for k in range(len(bins)):
@@ -222,7 +222,7 @@ def dxdy_hist(img_gray, num_bins):
             if bins[k-1] <= stacked[i][1] < bins[k]:
                 deriv_xy[1] = k-1
                     
-            hists[deriv_xy[0],deriv_xy[1]] += 1
+        hists[deriv_xy[0],deriv_xy[1]] += 1
     
     hists = hists/np.sum(hists)
     # return the histogram as a 1D vector
