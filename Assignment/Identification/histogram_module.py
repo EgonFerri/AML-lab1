@@ -22,19 +22,26 @@ def normalized_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
+    # flattening the image to iterate over it
     flattened = [pix for dim in img_gray for pix in dim]
+
     min_interval = 0 - 0.00000001
     max_interval = 255 + 0.00000001
     
+    # the bin size is equal to the difference of the extremes
+    # divided by the input number of bins
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
     
+    # filling the dictionary's keys with the equal-distanced bins 
     previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
         bin_hist[bin_] = 0
         previous = bin_
     
+    # filling the dictionary's values with the frequencies of the 
+    # pixels in the bins intervals
     keys = list(bin_hist.keys())
     for pix in flattened:
         for i in range(len(bin_hist)):
@@ -63,14 +70,18 @@ def rgb_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
+    # flattening the image to iterate over it
     flattened = [pix for dim in img_color_double for pix in dim]
-    pixels = [el for array in flattened for el in array]
+    
     min_interval = 0 - 0.00000001
     max_interval = 255 + 0.00000001
     
+    # the bin size is equal to the difference of the extremes
+    # divided by the input number of bins
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
     
+    # filling the dictionary's keys with the equal-distanced bins 
     previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
@@ -121,9 +132,12 @@ def rg_hist(img_color_double, num_bins):
     min_interval = 0 - 0.00000001
     max_interval = 255 + 0.00000001
     
+    # the bin size is equal to the difference of the extremes
+    # divided by the input number of bins    
     bin_size = (max_interval-min_interval)/num_bins
     bin_hist = {min_interval:0}
     
+    # filling the dictionary's keys with the equal-distanced bins 
     previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
@@ -133,9 +147,11 @@ def rg_hist(img_color_double, num_bins):
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
+    # filling the array's values with the frequencies of the 
+    # pixels in the bins intervals
     keys = list(bin_hist.keys())
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
-        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
+        # Increment the histogram bin which corresponds to the R,G value of the pixel i
         rg = [0,0]
         for k in range(len(bin_hist)):
             if keys[k-1] <= flattened[i][0] < keys[k]:
@@ -144,6 +160,7 @@ def rg_hist(img_color_double, num_bins):
                 rg[1] = k-1
                     
         hists[rg[0],rg[1]] += 1
+
     #Normalize the histogram such that its integral (sum) is equal 1
     hists = hists/np.sum(hists)
     #Return the histogram as a 1D vector
@@ -170,25 +187,34 @@ def dxdy_hist(img_gray, num_bins):
     min_interval = -6
     max_interval = 6
     
+    # defining the x and y derivatives of the image and
+    # defining the minimum and maximum range of the derivatives
     derivx, derivy = gauss_module.gaussderiv(img_gray, 3)
     derivx = np.clip(derivx, min_interval, max_interval)
     derivy = np.clip(derivy, min_interval, max_interval) 
-        
+    
+    # stacking the derivatives to iterate over them
     stacked = np.array(list(zip(derivx.reshape(-1), derivy.reshape(-1))))
+
+    # the bin size is equal to the difference of the extremes
+    # divided by the input number of bins    
     bin_size = (max_interval - min_interval)/num_bins
     
-    bins = [-6 for _ in range(num_bins+1)]
-    previous = -6
+    # filling the list's values with the equal-distanced bins
+    bins = [min_interval for _ in range(num_bins+1)]
+    previous = min_interval
     for i in range(num_bins):
         bin_ = previous + bin_size
         bins[i+1] = bin_
         previous = bin_
-    #Define a 2D histogram  with "num_bins^2" number of entries
+
+    # defining a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
     
-
+    # filling the array's values with the frequencies of the 
+    # pixels in the bins intervals
     for i in range(derivx.shape[0]):
-        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i 
+
         deriv_xy = [0,0]
         for k in range(len(bins)):
             if bins[k-1] <= stacked[i][0] < bins[k]:
@@ -199,7 +225,7 @@ def dxdy_hist(img_gray, num_bins):
             hists[deriv_xy[0],deriv_xy[1]] += 1
     
     hists = hists/np.sum(hists)
-    #Return the histogram as a 1D vector
+    # return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     return hists
 
