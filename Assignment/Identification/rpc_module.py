@@ -23,24 +23,27 @@ def plot_rpc(D, plot_color):
     assert(num_images == num_queries), 'Distance matrix should be a squatrix'
     
     labels = np.diag([1]*num_images)
-      
+    
     d = D.reshape(D.size)
     l = labels.reshape(labels.size)
-     
+    
+    
     sortidx = d.argsort()
     d = d[sortidx]
     l = l[sortidx]
     
-    tp = 0
-    #... (your code here)
+    tp = 0 #true positive
+    fn = num_images #false negative
+    fp = 0 #false positive
     
     for idt in range(len(d)):
         tp += l[idt]
-        #... (your code here)
+        fn -= l[idt]
+        fp += (1 - l[idt])
         
         #Compute precision and recall values and append them to "recall" and "precision" vectors
-        #... (your code here)
-    
+        precision.append(tp/(tp+fp))
+        recall.append(tp/(tp+fn))
     plt.plot([1-precision[i] for i in range(len(precision))], recall, plot_color+'-')
 
 
