@@ -29,9 +29,9 @@ def dist_l2(x,y):
 
 def dist_chi2(x,y):
     
-    x += 1
-    y += 1
-    dist = np.sum(((x - y)**2)/(x + y))
+    x += 0.5
+    y += 0.5
+    dist = np.sum(((x - y)**2)/((x) + (y)))
     assert 0 <= dist <= np.inf, "not in [0, inf]"
     return dist
 
