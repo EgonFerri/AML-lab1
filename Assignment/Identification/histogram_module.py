@@ -4,11 +4,11 @@ from numpy import histogram as hist
 
 
 #Add the Filtering folder, to import the gauss_module.py file, where gaussderiv is defined (needed for dxdy_hist)
-#import sys, os, inspect
-#currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-#parentdir = os.path.dirname(currentdir)
-#filteringpath = os.path.join(parentdir, 'Filtering')
-#sys.path.insert(0,filteringpath)
+import sys, os, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+filteringpath = os.path.join(parentdir, 'Filtering')
+sys.path.insert(0,filteringpath)
 import gauss_module
 
 
