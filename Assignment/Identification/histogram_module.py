@@ -25,8 +25,8 @@ def normalized_hist(img_gray, num_bins):
     # flattening the image to iterate over it
     flattened = [pix for dim in img_gray for pix in dim]
 
-    min_interval = 0 - 0.00000001
-    max_interval = 255 + 0.00000001
+    min_interval = 0 
+    max_interval = 255 
     
     # the bin size is equal to the difference of the extremes
     # divided by the input number of bins
@@ -189,7 +189,7 @@ def dxdy_hist(img_gray, num_bins):
     # defining the x and y derivatives of the image and
     # defining the minimum and maximum range of the derivatives
     derivx, derivy = gauss_module.gaussderiv(img_gray, 3)
-    derivx = np.clip(img_gray, min_interval, max_interval)
+    derivx = np.clip(derivx, min_interval, max_interval)
     derivy = np.clip(derivy, min_interval, max_interval) 
     
     # stacking the derivatives to iterate over them
