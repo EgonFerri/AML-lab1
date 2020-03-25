@@ -10,7 +10,9 @@ import math
 def dist_intersect(x,y):
     
     zipped = list(map(min, list(zip(x,y))))
-    return 1 - (0.5*((np.sum(zipped)/np.sum(x)) + (np.sum(zipped)/np.sum(y))))
+    dist = 1 - (0.5*((np.sum(zipped)/np.sum(x)) + (np.sum(zipped)/np.sum(y))))
+    assert 0 <= dist <= 1, "not in [0,1]"
+    return dist
 
 
 # Compute the L2 distance between x and y histograms
